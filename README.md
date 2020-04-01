@@ -22,7 +22,37 @@ docker run -t -d -p 8181:8181 -p 8101:8101 -p 5005:5005 -p 830:830 --name onos o
 After this, the ONOS GUI should be visible on your browser: http://localhost:8181/onos/ui/login.html
 The default user and password is `karaf`
 
-To install all Node.js dependencies, write the following command
+-------
+
+To install all Node.js dependencies, use the following command
 ```
 npm i
+```
+
+
+## Configuration
+
+### Docker
+Create internal network
+```
+docker network create sdn_optical_network
+```
+
+Attach onos container to the network
+```
+docker network connect sdn_optical_network onos
+```
+
+### ONOS
+
+Use the following command to access to ONOS console
+```
+ssh onos@localhost -p 8101
+```
+Pasword for `onos` user is `rocks`.
+Press `control + d` to exit.
+
+Install the apps `odtn-service, roadm` and `optical-rest` with the `app activate` command:
+```
+app activate odtn-service, roadm, optical-rest
 ```
