@@ -1,4 +1,5 @@
 #  Emulated optical network controlled by ONOS
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Installation
 
@@ -7,7 +8,7 @@
 Make sure that [Docker](https://docs.docker.com/install/#supported-platforms) and [Docker-compose](https://docs.docker.com/compose/install/) are installed.
 
 #### Node.js
-Node.js >= 8.0 required, Node.js [12.16](https://nodejs.org/en/download/) recommended.
+Node.js >= 8.0 required, Node.js [13](https://nodejs.org/en/download/) recommended.
 
 ### Dependencies
 
@@ -33,12 +34,12 @@ npm i
 ## Configuration
 
 ### Docker
-Create internal network
+Create an internal network called `sdn_optical_network`
 ```
 docker network create sdn_optical_network
 ```
 
-Attach onos container to the network
+Attach `onos` container to the network
 ```
 docker network connect sdn_optical_network onos
 ```
@@ -52,7 +53,13 @@ ssh onos@localhost -p 8101
 Pasword for `onos` user is `rocks`.
 Press `control + d` to exit.
 
-Install the apps `odtn-service, roadm` and `optical-rest` with the `app activate` command:
+Install the apps `odtn-service, roadm` and `optical-rest` with the `app activate` command
 ```
-app activate odtn-service, roadm, optical-rest
+app activate odtn-service
+app activate roadm
+app activate optical-rest
 ```
+----
+
+
+

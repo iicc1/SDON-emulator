@@ -1,14 +1,14 @@
-const deploy = require('../deploy')
+import deploy from '../deploy'
 
 const router = app => {
-	app.get('/deploy/:instances_num', async (request, response) => {
-        const instances_num = request.params.instances_num
-		let result = await deploy(instances_num) 
-        let reply = {}
-        reply.success = true
-        reply.data = result
-        response.send(reply);
-    });
+  app.get('/deploy/:instances_num', async (request, response) => {
+    const instancesNum = request.params.instances_num
+    const result = await deploy(instancesNum)
+    const reply = {}
+    reply.success = true
+    reply.data = result
+    response.send(reply)
+  })
 }
 
-module.exports = router;
+export default router
