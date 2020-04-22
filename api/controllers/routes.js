@@ -1,4 +1,4 @@
-import deploy from '../deploy'
+import deploy from '../models/deploy'
 
 const router = app => {
   app.get('/deploy/:instances_num', async (request, response) => {

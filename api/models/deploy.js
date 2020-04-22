@@ -1,34 +1,36 @@
-import { promises as fs } from 'fs'
-import fetch from 'node-fetch'
-import { promisify } from 'util'
-const exec = promisify(require('child_process').exec)
+const util = require('util')
+const exec = util.promisify(require('child_process').exec)
+const fs = require('fs').promises
+const fetch = require('node-fetch')
+const config = require('../config/index')
+const utils = require('../helpers/utils')
+const Net2PlanParser = require('../helpers/Net2PlanParser')
 
-const ONOS_API_USER = 'karaf' // Default
-const ONOS_API_PASSWORD = 'karaf' // Default
-
-async function deploy (instancesNumber) {
-  console.log('Deploying ' + instancesNumber + ' agents...')
-
+async function deploy (topologyName) {
+  // TODO check if num containers created === nodesnumber
   // const previous_containers = await getContainers()
   // await deleteContainers(previous_containers)
+  const { topology, nodeNumber, linkNumber } = await Net2PlanParser.topologyParser(topologyName)
 
-  await createContainers(instancesNumber)
+  console.log('Deploying ' + topologyName + ' which has ' + nodeNumber + ' nodes and ' + linkNumber + ' links')
+
+  await createContainers(nodeNumber)
 
   const containers = await getContainers()
 
-  const devices = createDevices(containers)
-  const links = createLinks(containers)
+  const { devices, devicesById } = createDevices(containers, topology)
+  const links = createLinks(devicesById, topology)
 
   const networkConfiguration = {
     devices: devices,
     links: links
   }
 
-  await fs.writeFile('networkConfiguration.json', JSON.stringify(networkConfiguration, null, '\t'))
+  await fs.writeFile('./topologies/ONOS/networkConfiguration.json', JSON.stringify(networkConfiguration, null, '\t'))
   console.log('Network configuration saved as networkConfiguration.json')
 
-  await deleteOnosNetwork()
-  await deployOnosNetwork(networkConfiguration)
+  console.log(await deleteOnosNetwork())
+  console.log(await deployOnosNetwork(networkConfiguration))
   /*
     {
         "devices": {},
@@ -39,7 +41,7 @@ async function deploy (instancesNumber) {
         "regions": {},
         "layouts": {}
       }
-    */
+  */
 
   return devices
 }
@@ -81,33 +83,40 @@ async function createContainers (n) {
   await exec('docker-compose up -d --build --scale agent=' + n)
 }
 
-function createDevices (containers) {
+function createDevices (containers, topology) {
   const devices = {}
-  for (const container of containers) {
-    devices['netconf:' + container.ip + ':' + container.port] = {
+  const devicesById = []
+  for (const i in containers) {
+    devices['netconf:' + containers[i].ip + ':' + containers[i].port] = {
       basic: {
-        name: container.name,
+        name: topology.nodes[i].name,
         driver: 'cassini-openconfig',
         locType: 'geo',
-        latitude: randomNumber(35, 45),
-        longitude: -1
+        latitude: topology.nodes[i].latitude,
+        longitude: topology.nodes[i].longitude
       },
       netconf: {
-        ip: container.ip,
-        port: container.port,
+        ip: containers[i].ip,
+        port: containers[i].port,
         username: 'root',
         password: 'root',
         'idle-timeout': 0
       }
     }
+    devicesById.push({ id: topology.nodes[i].id, device: 'netconf:' + containers[i].ip + ':' + containers[i].port })
   }
-  return devices
+  return { devices, devicesById }
 }
 
-function createLinks (containers) {
+function createLinks (devicesById, topology) {
   const links = {}
-  for (const container of containers) {
-    links['netconf:' + container.ip + ':' + container.port + '/201-netconf:172.22.0.8:830/' + randomNumber(201, 220)] = {
+  for (const link of topology.links) {
+    const originNodeId = link.originId
+    const destinationNodeId = link.destinationId
+    const originNode = devicesById.find(x => x.id === originNodeId)
+    const destinationNode = devicesById.find(x => x.id === destinationNodeId)
+
+    links[originNode.device + '/' + utils.randomBetween(200, 232) + '-' + destinationNode.device + '/' + utils.randomBetween(200, 232)] = {
       basic: {
         type: 'OPTICAL',
         metric: '1',
@@ -121,12 +130,12 @@ function createLinks (containers) {
 
 async function deleteOnosNetwork () {
   // ONOS network configuration must be cleared as well
-  return fetch('http://localhost:8181/onos/v1/network/configuration', {
+  return fetch(config.onos.api.endpoint + '/onos/v1/network/configuration', {
     method: 'DELETE',
     credentials: 'include',
     headers: {
       Accept: 'application/json',
-      Authorization: 'Basic ' + Buffer.from(ONOS_API_USER + ':' + ONOS_API_PASSWORD).toString('base64')
+      Authorization: 'Basic ' + Buffer.from(config.onos.api.user + ':' + config.onos.api.password).toString('base64')
     }
   })
     .then((response) => {
@@ -150,13 +159,13 @@ async function deleteOnosNetwork () {
 }
 
 async function deployOnosNetwork (networkConfiguration) {
-  return fetch('http://localhost:8181/onos/v1/network/configuration', {
+  return fetch(config.onos.api.endpoint + '/onos/v1/network/configuration', {
     method: 'POST',
     credentials: 'include',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: 'Basic ' + Buffer.from(ONOS_API_USER + ':' + ONOS_API_PASSWORD).toString('base64')
+      Authorization: 'Basic ' + Buffer.from(config.onos.api.user + ':' + config.onos.api.password).toString('base64')
     },
     body: JSON.stringify(networkConfiguration, null, '\t')
   })
@@ -180,14 +189,8 @@ async function deployOnosNetwork (networkConfiguration) {
     })
 }
 
-function randomNumber (min, max) {
-  return Math.floor(
-    Math.random() * (max - min + 1) + min
-  )
-}
-
 if (process.argv[2]) {
   deploy(process.argv[2])
 }
 
-export default deploy
+module.exports = deploy

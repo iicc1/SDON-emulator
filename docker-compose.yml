@@ -1,6 +1,11 @@
 version: '3'
+
 services:
     agent:
         build: agent
-        # ports:
-        #    - '11000-11100:830'
+        #ports: 
+         #   - '11000-11009:830'
+networks:
+    default:
+        external:
+            name: sdn_optical_network
