@@ -2,21 +2,25 @@
   "name": "sdn_optical_network",
   "version": "1.0.0",
   "description": "## Installation",
-  "main": "deploy.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "standard"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/iicc1/sdn_optical_network.git"
   },
-  "author": "Ignacio Iglesias",
+  "author": "Ignacio Iglesias Castreño",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/iicc1/sdn_optical_network/issues"
   },
   "homepage": "https://github.com/iicc1/sdn_optical_network#readme",
   "dependencies": {
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "xml2js": "^0.4.23"
+  },
+  "devDependencies": {
+    "standard": "*"
   }
 }

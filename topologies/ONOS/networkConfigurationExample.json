@@ -1,0 +1,150 @@
+{
+	"devices": {
+		"netconf:172.22.0.4:830": {
+			"basic": {
+				"name": "sdn_optical_network_agent_4",
+				"driver": "cassini-openconfig",
+				"locType": "geo",
+				"latitude": 37,
+				"longitude": -1
+			},
+			"netconf": {
+				"ip": "172.22.0.4",
+				"port": 830,
+				"username": "root",
+				"password": "root",
+				"idle-timeout": 0
+			}
+		},
+		"netconf:172.22.0.5:830": {
+			"basic": {
+				"name": "sdn_optical_network_agent_6",
+				"driver": "cassini-openconfig",
+				"locType": "geo",
+				"latitude": 45,
+				"longitude": -1
+			},
+			"netconf": {
+				"ip": "172.22.0.5",
+				"port": 830,
+				"username": "root",
+				"password": "root",
+				"idle-timeout": 0
+			}
+		},
+		"netconf:172.22.0.6:830": {
+			"basic": {
+				"name": "sdn_optical_network_agent_2",
+				"driver": "cassini-openconfig",
+				"locType": "geo",
+				"latitude": 39,
+				"longitude": -1
+			},
+			"netconf": {
+				"ip": "172.22.0.6",
+				"port": 830,
+				"username": "root",
+				"password": "root",
+				"idle-timeout": 0
+			}
+		},
+		"netconf:172.22.0.3:830": {
+			"basic": {
+				"name": "sdn_optical_network_agent_3",
+				"driver": "cassini-openconfig",
+				"locType": "geo",
+				"latitude": 42,
+				"longitude": -1
+			},
+			"netconf": {
+				"ip": "172.22.0.3",
+				"port": 830,
+				"username": "root",
+				"password": "root",
+				"idle-timeout": 0
+			}
+		},
+		"netconf:172.22.0.7:830": {
+			"basic": {
+				"name": "sdn_optical_network_agent_1",
+				"driver": "cassini-openconfig",
+				"locType": "geo",
+				"latitude": 35,
+				"longitude": -1
+			},
+			"netconf": {
+				"ip": "172.22.0.7",
+				"port": 830,
+				"username": "root",
+				"password": "root",
+				"idle-timeout": 0
+			}
+		},
+		"netconf:172.22.0.8:830": {
+			"basic": {
+				"name": "sdn_optical_network_agent_5",
+				"driver": "cassini-openconfig",
+				"locType": "geo",
+				"latitude": 41,
+				"longitude": -1
+			},
+			"netconf": {
+				"ip": "172.22.0.8",
+				"port": 830,
+				"username": "root",
+				"password": "root",
+				"idle-timeout": 0
+			}
+		}
+	},
+	"links": {
+		"netconf:172.22.0.4:830/201-netconf:172.22.0.8:830/208": {
+			"basic": {
+				"type": "OPTICAL",
+				"metric": "1",
+				"durable": true,
+				"bidirectional": true
+			}
+		},
+		"netconf:172.22.0.5:830/201-netconf:172.22.0.8:830/215": {
+			"basic": {
+				"type": "OPTICAL",
+				"metric": "1",
+				"durable": true,
+				"bidirectional": true
+			}
+		},
+		"netconf:172.22.0.6:830/201-netconf:172.22.0.8:830/214": {
+			"basic": {
+				"type": "OPTICAL",
+				"metric": "1",
+				"durable": true,
+				"bidirectional": true
+			}
+		},
+		"netconf:172.22.0.3:830/201-netconf:172.22.0.8:830/209": {
+			"basic": {
+				"type": "OPTICAL",
+				"metric": "1",
+				"durable": true,
+				"bidirectional": true
+			}
+		},
+		"netconf:172.22.0.7:830/201-netconf:172.22.0.8:830/202": {
+			"basic": {
+				"type": "OPTICAL",
+				"metric": "1",
+				"durable": true,
+				"bidirectional": true
+			}
+		},
+		"netconf:172.22.0.8:830/201-netconf:172.22.0.8:830/204": {
+			"basic": {
+				"type": "OPTICAL",
+				"metric": "1",
+				"durable": true,
+				"bidirectional": true
+			}
+		}
+	}
+}
