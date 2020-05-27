@@ -31,6 +31,8 @@ async function deploy (topologyName) {
 
   console.log(await deleteOnosNetwork())
   console.log(await deployOnosNetwork(networkConfiguration))
+  await utils.sleep(60000)
+  console.log(await deployOnosNetwork(networkConfiguration))
   /*
     {
         "devices": {},

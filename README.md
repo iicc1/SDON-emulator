@@ -20,7 +20,7 @@ Run the image in the background. The container will be named `onos`
 ```
 docker run -t -d -p 8181:8181 -p 8101:8101 -p 5005:5005 -p 830:830 --name onos onosproject/onos:2.3.0
 ```
-After this, the ONOS GUI should be visible on your browser: http://localhost:8181/onos/ui/login.html
+After some seconds, the ONOS GUI should be visible on your browser: http://localhost:8181/onos/ui/login.html
 The default user and password is `karaf`
 
 -------
@@ -59,7 +59,3 @@ app activate odtn-service
 app activate roadm
 app activate optical-rest
 ```
-----
-
-
-
