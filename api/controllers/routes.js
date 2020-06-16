@@ -1,14 +1,18 @@
-import deploy from '../models/deploy'
+const deploy = require('../models/deploy')
 
 const router = app => {
-  app.get('/deploy/:instances_num', async (request, response) => {
-    const instancesNum = request.params.instances_num
-    const result = await deploy(instancesNum)
+  app.get('/deploy/:topologyType/:topologyName', async (request, response) => {
     const reply = {}
-    reply.success = true
-    reply.data = result
+    try {
+      reply.success = true
+      reply.result = await deploy(request.params.topologyType, request.params.topologyName)
+    } catch (error) {
+      console.log(error)
+      reply.success = false
+      reply.message = error.message
+    }
     response.send(reply)
   })
 }
 
-export default router
+module.exports = router

@@ -1,16 +1,21 @@
+require('dotenv')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const fs = require('fs').promises
 const fetch = require('node-fetch')
-const config = require('../config/index')
 const utils = require('../helpers/utils')
 const Net2PlanParser = require('../helpers/Net2PlanParser')
 
-async function deploy (topologyName) {
+const deploy = async (topologyType, topologyName) => {
   // TODO check if num containers created === nodesnumber
   // const previous_containers = await getContainers()
   // await deleteContainers(previous_containers)
-  const { topology, nodeNumber, linkNumber } = await Net2PlanParser.topologyParser(topologyName)
+  let topology, nodeNumber, linkNumber
+  if (topologyType === 'net2plan') {
+    ({ topology, nodeNumber, linkNumber } = await Net2PlanParser.topologyParser(topologyName))
+  } else {
+    throw new Error('Topology type ' + topologyType + ' not supported.')
+  }
 
   console.log('Deploying ' + topologyName + ' which has ' + nodeNumber + ' nodes and ' + linkNumber + ' links')
 
@@ -48,7 +53,7 @@ async function deploy (topologyName) {
   return devices
 }
 
-async function getContainers () {
+const getContainers = async () => {
   const dockerPsStd = await exec('docker ps --format "{{.Names}}"')
   const containerIds = dockerPsStd.stdout.split('\n')
   const containerIdsFiltered = []
@@ -81,11 +86,11 @@ async function deleteContainers (containers) {
 }
 */
 
-async function createContainers (n) {
+const createContainers = async (n) => {
   await exec('docker-compose up -d --build --scale agent=' + n)
 }
 
-function createDevices (containers, topology) {
+const createDevices = (containers, topology) => {
   const devices = {}
   const devicesById = []
   for (const i in containers) {
@@ -110,7 +115,7 @@ function createDevices (containers, topology) {
   return { devices, devicesById }
 }
 
-function createLinks (devicesById, topology) {
+const createLinks = (devicesById, topology) => {
   const links = {}
   for (const link of topology.links) {
     const originNodeId = link.originId
@@ -130,14 +135,14 @@ function createLinks (devicesById, topology) {
   return links
 }
 
-async function deleteOnosNetwork () {
+const deleteOnosNetwork = async () => {
   // ONOS network configuration must be cleared as well
-  return fetch(config.onos.api.endpoint + '/onos/v1/network/configuration', {
+  return fetch(process.env.ONOS_API_ENDPOINT + '/onos/v1/network/configuration', {
     method: 'DELETE',
     credentials: 'include',
     headers: {
       Accept: 'application/json',
-      Authorization: 'Basic ' + Buffer.from(config.onos.api.user + ':' + config.onos.api.password).toString('base64')
+      Authorization: 'Basic ' + Buffer.from(process.env.ONOS_API_USER + ':' + process.env.ONOS_API_PASSWORD).toString('base64')
     }
   })
     .then((response) => {
@@ -160,14 +165,14 @@ async function deleteOnosNetwork () {
     })
 }
 
-async function deployOnosNetwork (networkConfiguration) {
-  return fetch(config.onos.api.endpoint + '/onos/v1/network/configuration', {
+const deployOnosNetwork = async (networkConfiguration) => {
+  return fetch(process.env.ONOS_API_ENDPOINT + '/onos/v1/network/configuration', {
     method: 'POST',
     credentials: 'include',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: 'Basic ' + Buffer.from(config.onos.api.user + ':' + config.onos.api.password).toString('base64')
+      Authorization: 'Basic ' + Buffer.from(process.env.ONOS_API_USER + ':' + process.env.ONOS_API_PASSWORD).toString('base64')
     },
     body: JSON.stringify(networkConfiguration, null, '\t')
   })

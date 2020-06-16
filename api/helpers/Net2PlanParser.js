@@ -2,7 +2,12 @@ const fs = require('fs').promises
 const xml2js = require('xml2js')
 
 const topologyParser = async (inputFile) => {
-  const topologyBuffer = await fs.readFile('topologies/Net2Plan/' + inputFile + '.n2p')
+  let topologyBuffer
+  try {
+    topologyBuffer = await fs.readFile('topologies/Net2Plan/' + inputFile + '.n2p')
+  } catch (error) {
+    throw new Error('Topology ' + inputFile + ' not found. Available topologies are located at the topologies folder.')
+  }
 
   const topology = {
     nodes: [],

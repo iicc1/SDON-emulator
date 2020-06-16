@@ -1,3 +1,6 @@
+# Generated temp files
+topologies/ONOS/*
+
 # Logs
 logs
 *.log
