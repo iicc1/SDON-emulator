@@ -73,6 +73,11 @@ Then, open a browser or use a tool like Postman, and try to deploy a network
 ```
 http://localhost:7000/deploy/net2plan/example7nodes
 ````
-After some seconds, the topology should be visible on ONOS with all devices and links ready.
+After one minute, the topology should be visible on ONOS with all devices and links ready. Refresh the GUI if some components are missing.
 
-![Topology view on ONOS](https://i.imgur.com/CyTMFus.jpg)
+![Topology view on ONOS](https://i.imgur.com/HakU5ux.jpg)
+
+To view the nodes over a map, open the menu located at the bottom right corner and activate the options "Select background geo map" and "Toogle background geo map".
+
+Unfortunately, it seems that ONOS does not really removes the links and nodes, so if you continue deploying more topologies, everything will be scrambled.
+To solve this, the ONOS container must be removed and relaunched, so all the data gets cleared.
