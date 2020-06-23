@@ -1,9 +1,17 @@
 FROM ubuntu:18.04
+
+WORKDIR /root
+
 COPY yang /root/yang
 COPY config /root/config
 COPY script /root/script
-RUN apt-get update && apt-get upgrade -y \
-    && apt-get install software-properties-common build-essential openssl libssl-dev libpcre3 libpcre3-dev git make cmake bison flex pkg-config graphviz doxygen valgrind zlib1g zlib1g-dev libev-dev libavl-dev libprotobuf-c-dev protobuf-c-compiler swig python-dev libcurl4-openssl-dev lib32ncurses5-dev -y
+
+RUN apt-get update && apt-get upgrade -y && apt-get install \
+    software-properties-common build-essential openssl libssl-dev \
+    libpcre3 libpcre3-dev git make cmake bison flex pkg-config graphviz doxygen \
+    valgrind zlib1g zlib1g-dev libev-dev libavl-dev libprotobuf-c-dev protobuf-c-compiler \
+    swig python-dev libcurl4-openssl-dev lib32ncurses5-dev iproute2 net-tools -y
+
 RUN echo "export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib" >> ~/.bashrc \
     && export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib \
     && cd ~ && git clone http://git.libssh.org/projects/libssh.git \
@@ -35,10 +43,12 @@ RUN echo "export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib" >> ~/.bashrc \
     && ssh-keygen -t rsa -b 2048 -f /etc/ssh/ssh_host_rsa_key \
     && sh -c 'echo root:root | chpasswd' \
     && cd /root/yang/openconfig-odtn && sh import-yangs.sh \
-    && cd /root/script && python get-pip.py \
-    && pip install netconf-console
+    && cd /root/script && python get-pip.py
+
+RUN pip install netconf-console requests
+
 EXPOSE 830
 EXPOSE 22
 EXPOSE 8080
-WORKDIR /root
+
 ENTRYPOINT ["sh", "/root/script/push-data.sh"]

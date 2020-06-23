@@ -23,6 +23,7 @@ Run the image in the background. The container will be named `onos`
 docker run -t -d -p 8181:8181 -p 8101:8101 -p 5005:5005 -p 830:830 --name onos onosproject/onos:2.3.0
 ```
 After some seconds, the ONOS GUI should be visible on your browser: http://localhost:8181/onos/ui/login.html
+
 The default user and password is `karaf`
 
 #### Install Node.js dependencies
@@ -79,5 +80,5 @@ After one minute, the topology should be visible on ONOS with all devices and li
 
 To view the nodes over a map, open the menu located at the bottom right corner and activate the options "Select background geo map" and "Toogle background geo map".
 
-Unfortunately, it seems that ONOS does not really removes the links and nodes, so if you continue deploying more topologies, everything will be scrambled.
-To solve this, the ONOS container must be removed and relaunched, so all the data gets cleared.
+Unfortunately, it seems that ONOS does not really removes the links and nodes, so if you continue deploying more topologies, everything will be scrambled and it will be a mess.
+To solve this, use a new ONOS container for every topology deployment.

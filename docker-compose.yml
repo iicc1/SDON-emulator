@@ -3,8 +3,12 @@ version: '3'
 services:
     agent:
         build: agent
-        #ports: 
+      # ports:
+         # - '7000:7000'
          #   - '11000-11009:830'
+        environment:
+          - CALLBACK_URL="http://${CALLBACK_URL}:${API_SERVER_PORT}/callback"
+
 networks:
     default:
         external:
