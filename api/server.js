@@ -6,8 +6,11 @@ const routes = require('./controllers/routes')
 const app = express()
 
 // Use Node.js body parsing middleware
-app.use(bodyParser.json())
+app.use(bodyParser.json({
+  limit: '50mb'
+}))
 app.use(bodyParser.urlencoded({
+  limit: '50mb',
   extended: true
 }))
 

@@ -7,7 +7,7 @@ services:
          # - '7000:7000'
          #   - '11000-11009:830'
         environment:
-          - CALLBACK_URL="http://${CALLBACK_URL}:${API_SERVER_PORT}/callback"
+          - CALLBACK_URL=http://${INTERNAL_IP}:${API_SERVER_PORT}/callback
 
 networks:
     default:

@@ -43,6 +43,9 @@ sysrepocfg --import=init-components.xml --format=xml openconfig-platform
 sleep 2
 sysrepocfg --import=init-terminal-device.xml --format=xml openconfig-terminal-device
 
+# Performs callback requests for configuration changes
+python /root/script/agent_callback.py &
+
 # Start Netconf Server
 netopeer2-server
 
