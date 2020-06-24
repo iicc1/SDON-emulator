@@ -8,9 +8,12 @@ COPY script /root/script
 
 RUN apt-get update && apt-get upgrade -y && apt-get install \
     software-properties-common build-essential openssl libssl-dev \
-    libpcre3 libpcre3-dev git make cmake bison flex pkg-config graphviz doxygen \
-    valgrind zlib1g zlib1g-dev libev-dev libavl-dev libprotobuf-c-dev protobuf-c-compiler \
-    swig python-dev libcurl4-openssl-dev lib32ncurses5-dev iproute2 net-tools -y
+    libpcre3 libpcre3-dev git make cmake bison flex pkg-config \
+    graphviz doxygen valgrind zlib1g zlib1g-dev libev-dev libavl-dev \
+    libprotobuf-c-dev protobuf-c-compiler swig python-dev libcurl4-openssl-dev \
+    lib32ncurses5-dev iproute2 net-tools python-dev python-pip -y
+
+RUN pip install netconf-console requests
 
 RUN echo "export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib" >> ~/.bashrc \
     && export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib \
@@ -42,13 +45,6 @@ RUN echo "export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib" >> ~/.bashrc \
     && make -j4 && make install \
     && ssh-keygen -t rsa -b 2048 -f /etc/ssh/ssh_host_rsa_key \
     && sh -c 'echo root:root | chpasswd' \
-    && cd /root/yang/openconfig-odtn && sh import-yangs.sh \
-    && cd /root/script && python get-pip.py
-
-RUN pip install netconf-console requests
-
-EXPOSE 830
-EXPOSE 22
-EXPOSE 8080
+    && cd /root/yang/openconfig-odtn && sh import-yangs.sh
 
 ENTRYPOINT ["sh", "/root/script/push-data.sh"]
