@@ -17,6 +17,7 @@ const deploy = async (topologyType, topologyName) => {
   console.log('Deploying ' + topologyName + ' which has ' + nodeNumber + ' nodes and ' + linkNumber + ' links')
 
   await docker.createContainers(nodeNumber)
+  await docker.retryContainers()
   const containers = await docker.getContainers()
   const { devices, devicesById } = createDevices(containers, topology)
   const links = createLinks(devicesById, topology)
@@ -37,7 +38,7 @@ const deploy = async (topologyType, topologyName) => {
   await onos.removeONOSTopology()
   setTimeout(() => onos.deployONOSTopology(networkConfiguration), 60000)
 
-  return devices
+  return networkConfiguration
 }
 
 const createDevices = (containers, topology) => {

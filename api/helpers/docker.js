@@ -1,8 +1,25 @@
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
+require('dotenv')
 
 const createContainers = async (instances) => {
-  await exec('docker-compose up -d --build --scale agent=' + instances)
+  try {
+    await exec('docker-compose up -d --build --scale agent=' + instances)
+  } catch (error) {
+    if (error.stderr.indexOf('Cannot start service agent: Ports are not available')) {
+      console.log('Warning: socket address not available, restarting (This is a Windows bug).')
+    }
+  }
+}
+
+const retryContainers = async () => {
+  const dockerPsStd = await exec('docker ps --format "{{.Names}}" --filter "status=created"')
+  const containerIds = dockerPsStd.stdout.split('\n')
+  for (const containerId of containerIds) {
+    if (containerId.includes('sdn_optical_network_agent_')) {
+      await exec('docker restart ' + containerId)
+    }
+  }
 }
 
 const getContainers = async () => {
@@ -17,12 +34,12 @@ const getContainers = async () => {
 
   const containers = []
   for (const i in containerIdsFiltered) {
-    const dockerInspectStd = await exec('docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ' + containerIdsFiltered[i])
-    // check
+    // const dockerInspectStd = await exec('docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" ' + containerIdsFiltered[i])
+    const dockerPortStd = await exec('docker port ' + containerIdsFiltered[i])
     containers[i] = {}
     containers[i].name = containerIdsFiltered[i]
-    containers[i].ip = dockerInspectStd.stdout.replace('\n', '')
-    containers[i].port = 830
+    containers[i].ip = process.env.PRIVATE_SERVER_IP // dockerInspectStd.stdout.replace('\n', '')
+    containers[i].port = dockerPortStd.stdout.match(/:(\w+)/)[1] // 830
   }
   console.log('containers', containers)
   return containers
@@ -37,5 +54,5 @@ const removeContainers = async (containers) => {
 }
 
 module.exports = {
-  createContainers, getContainers, removeContainers
+  createContainers, retryContainers, getContainers, removeContainers
 }
