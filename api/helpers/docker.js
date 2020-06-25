@@ -38,7 +38,7 @@ const getContainers = async () => {
     const dockerPortStd = await exec('docker port ' + containerIdsFiltered[i])
     containers[i] = {}
     containers[i].name = containerIdsFiltered[i]
-    containers[i].ip = process.env.PRIVATE_SERVER_IP // dockerInspectStd.stdout.replace('\n', '')
+    containers[i].ip = process.env.SERVER_IP // dockerInspectStd.stdout.replace('\n', '')
     containers[i].port = dockerPortStd.stdout.match(/:(\w+)/)[1] // 830
   }
   console.log('containers', containers)

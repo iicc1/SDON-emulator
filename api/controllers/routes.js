@@ -33,7 +33,7 @@ const router = app => {
     response.send(reply)
   })
   // Route called from callbacks generated inside the containers.
-  // TODO add middleware that translates ip to device?
+  // TODO add middleware that translates ip to device
   app.post('/callback/', async (request, response) => {
     const reply = {}
     try {
