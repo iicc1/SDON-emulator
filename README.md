@@ -44,11 +44,6 @@ Create an internal network called `sdn_optical_network`
 docker network create sdn_optical_network
 ```
 
-Attach the `onos` container to the network
-```
-docker network connect sdn_optical_network onos
-```
-
 ### ONOS
 Use the following command to access to ONOS console
 ```

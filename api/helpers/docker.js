@@ -6,8 +6,10 @@ const createContainers = async (instances) => {
   try {
     await exec('docker-compose up -d --build --scale agent=' + instances)
   } catch (error) {
-    if (error.stderr.indexOf('Cannot start service agent: Ports are not available')) {
-      console.log('Warning: socket address not available, restarting (This is a Windows bug).')
+    if (error.stderr.indexOf('Ports are not available')) {
+      console.log('Warning: socket address not available, restarting. (This is a Windows bug)')
+    } else {
+      throw new Error(error.stderr)
     }
   }
 }
