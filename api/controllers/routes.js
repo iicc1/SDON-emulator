@@ -38,8 +38,11 @@ const router = app => {
     const reply = {}
     try {
       reply.success = true
-      console.log(request.body.notification)
-      console.log(request.body.changes)
+      console.log('Callback received')
+      // console.log('Docker host:', request.connection.remoteAddress)
+      console.log('Notification:', request.body.notification)
+      console.log('Changes:', request.body.changes)
+      // console.log('current', request.body.current)
     } catch (error) {
       console.log(error)
       reply.success = false
