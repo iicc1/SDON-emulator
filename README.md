@@ -38,6 +38,7 @@ This project uses `.env` files for the configuration variables.
 
 There is an existing `env.example` file with all the existing variables and its default values.
 Rename it to `.env` and modify the data if neccesary.
+
 ### Docker
 Create an internal network called `sdn_optical_network`
 ```
