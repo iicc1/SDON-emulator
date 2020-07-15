@@ -18,7 +18,7 @@ const retryContainers = async () => {
   const dockerPsStd = await exec('docker ps --format "{{.Names}}" --filter "status=created"')
   const containerIds = dockerPsStd.stdout.split('\n')
   for (const containerId of containerIds) {
-    if (containerId.includes('sdn_optical_network_agent_')) {
+    if (containerId.includes('sdn_optical_network_agent_') || containerId.includes('sdnopticalnetworkagent_')) {
       await exec('docker restart ' + containerId)
     }
   }
@@ -29,7 +29,7 @@ const getContainers = async () => {
   const containerIds = dockerPsStd.stdout.split('\n')
   const containerIdsFiltered = []
   for (const containerId of containerIds) {
-    if (containerId.includes('sdn_optical_network_agent_')) {
+    if (containerId.includes('sdn_optical_network_agent_') || containerId.includes('sdnopticalnetworkagent_')) {
       containerIdsFiltered.push(containerId)
     }
   }

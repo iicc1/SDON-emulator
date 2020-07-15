@@ -27,7 +27,7 @@ After some seconds, the ONOS GUI should be visible on your browser: http://local
 The default user and password is `karaf`
 
 #### Install Node.js dependencies
-To install all Node.js dependencies, use the following command
+To install all Node.js dependencies, use the following command inside the `api` folder.
 ```
 npm i
 ```
