@@ -3,8 +3,16 @@ const exec = util.promisify(require('child_process').exec)
 require('dotenv')
 
 const createContainers = async (instances) => {
+  const API_SERVER_PORT = 8000
+  const SERVER_IP = '192.168.31.239'
+  const CALLBACK_URL = 'http://' + SERVER_IP + ':' + API_SERVER_PORT + '/callback'
   try {
-    await exec('docker-compose up -d --build --scale agent=' + instances)
+    for (let i = 0; i < instances; i++) {
+      const externalPort = 8001 + i
+      const containerName = 'sdn_optical_network_agent_' + i
+      await exec('docker run --publish ' + externalPort + ':830 --detach -e CALLBACK_URL="' + CALLBACK_URL + '" --name ' + containerName + ' sdn_optical_network_agent:latest')
+    }
+    // await exec('docker-compose up -d --build --scale agent=' + instances)
   } catch (error) {
     if (error.stderr.indexOf('Ports are not available')) {
       console.log('Warning: socket address not available, restarting. (This is a Windows bug)')
