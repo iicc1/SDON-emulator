@@ -68,7 +68,7 @@ node api/server.js
 ```
 Then, open a browser or use a tool like Postman, and try to deploy a network
 ```
-http://localhost:7000/deploy/net2plan/example7nodes
+http://localhost:8000/deploy/net2plan/example7nodes
 ````
 After one minute, the topology should be visible on ONOS with all devices and links ready. Refresh the GUI if some components are missing.
 

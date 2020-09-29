@@ -3,6 +3,7 @@ const docker = require('../helpers/docker')
 const onos = require('../helpers/onos')
 
 const remove = async (option) => {
+  // Removes the online containers or the ONOS topology or both at the same time
   const containers = await docker.getContainers()
   if (option === 'containers') {
     await docker.removeContainers(containers)

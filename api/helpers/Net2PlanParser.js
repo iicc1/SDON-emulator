@@ -1,6 +1,7 @@
 const fs = require('fs').promises
 const xml2js = require('xml2js')
 
+// Returns the basic information from a Net2Plan topology file
 const topologyParser = async (inputFile) => {
   let topologyBuffer
   try {

@@ -2,7 +2,7 @@ const deploy = require('../models/deploy')
 const remove = require('../models/remove')
 
 const router = app => {
-  // Just to check that the API works
+  // Checks that the API works
   app.get('/test', async (request, response) => {
     response.send({ success: true })
   })
@@ -19,6 +19,7 @@ const router = app => {
     }
     response.send(reply)
   })
+
   // Removes Docker containers and/or ONOS topology data
   app.get('/remove/:option', async (request, response) => {
     const reply = {}
@@ -32,6 +33,7 @@ const router = app => {
     }
     response.send(reply)
   })
+
   // Route called from callbacks generated inside the containers.
   // TODO add middleware that translates ip to device
   app.post('/callback/', async (request, response) => {

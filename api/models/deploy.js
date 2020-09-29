@@ -6,22 +6,25 @@ const docker = require('../helpers/docker')
 const onos = require('../helpers/onos')
 
 const deploy = async (topologyType, topologyName) => {
-  // TODO check if num containers created === nodesnumber
   let topology, nodeNumber, linkNumber
   if (topologyType === 'net2plan') {
+    // Extracts the basic data from the Net2Plan topology
     ({ topology, nodeNumber, linkNumber } = await Net2PlanParser.topologyParser(topologyName))
   } else {
+    // Only Net2Plan topologies are supported
     throw new Error('Topology type ' + topologyType + ' not supported.')
   }
 
   console.log('Deploying ' + topologyName + ' which has ' + nodeNumber + ' nodes and ' + linkNumber + ' links')
 
+  // Creates the required containers and builds the ONOS network data
   await docker.createContainers(nodeNumber)
   await docker.retryContainers()
   const containers = await docker.getContainers()
   const { devices, devicesById } = createDevices(containers, topology)
   const links = createLinks(devicesById, topology)
 
+  // ONOS network configuration
   const networkConfiguration = {
     devices: devices,
     links: links,
@@ -32,15 +35,20 @@ const deploy = async (topologyType, topologyName) => {
     layouts: {}
   }
 
+  // Saves the ONOS network configuration to the disk
   await fs.writeFile('./topologies/ONOS/networkConfiguration.json', JSON.stringify(networkConfiguration, null, '\t'))
   console.log('Network configuration saved as networkConfiguration.json')
 
+  // Removes the previous topology
   await onos.removeONOSTopology()
+  // Deploys the new topology with some delay, so all the containers are ready
   setTimeout(() => onos.deployONOSTopology(networkConfiguration), 60000)
 
+  // Returns the ONOS network configuration to the API controller to display it to the user
   return networkConfiguration
 }
 
+// Creates the ONOS device object and an auxiliar object to build the links object
 const createDevices = (containers, topology) => {
   const devices = {}
   const devicesById = []
@@ -66,6 +74,7 @@ const createDevices = (containers, topology) => {
   return { devices, devicesById }
 }
 
+// Creates the ONOS links object by the topology and the auxiliar object
 const createLinks = (devicesById, topology) => {
   const links = {}
   for (const link of topology.links) {

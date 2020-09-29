@@ -21,7 +21,7 @@ RUN echo "export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib" >> ~/.bashrc \
     && cd libssh && mkdir build && cd build \
     && git checkout stable-0.8 \
     && cmake .. && make -j4 && make install \
-    && cd ~ && git clone git://git.cryptomilk.org/projects/cmocka.git \
+    && cd ~ && git clone http://git.cryptomilk.org/projects/cmocka.git \
     && cd cmocka && mkdir build && cd build \
     && git checkout tags/cmocka-1.0.1 \
     && cmake .. && make && make install \

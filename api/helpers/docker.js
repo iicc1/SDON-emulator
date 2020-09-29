@@ -2,6 +2,7 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 require('dotenv')
 
+// Creates a determined number of Docker containers by using Docker Compose
 const createContainers = async (instances) => {
   try {
     await exec('docker-compose up -d --build --scale agent=' + instances)
@@ -14,6 +15,7 @@ const createContainers = async (instances) => {
   }
 }
 
+// Restarts the containers that failed to start
 const retryContainers = async () => {
   const dockerPsStd = await exec('docker ps --format "{{.Names}}" --filter "status=created"')
   const containerIds = dockerPsStd.stdout.split('\n')
@@ -24,6 +26,7 @@ const retryContainers = async () => {
   }
 }
 
+// Returns an array of the available Docker containers by its name
 const getContainers = async () => {
   const dockerPsStd = await exec('docker ps --format "{{.Names}}"')
   const containerIds = dockerPsStd.stdout.split('\n')
