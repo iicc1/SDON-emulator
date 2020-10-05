@@ -17,5 +17,5 @@ app.use(bodyParser.urlencoded({
 routes(app)
 // Start the server
 app.listen(process.env.API_SERVER_PORT, () => {
-  console.log('Listening on port ' + process.env.API_SERVER_PORT)
+  console.log('Server listening on port ' + process.env.API_SERVER_PORT)
 })

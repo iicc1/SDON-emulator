@@ -1,11 +1,16 @@
 const deploy = require('../models/deploy')
 const remove = require('../models/remove')
+const swaggerUi = require('swagger-ui-express')
+const swaggerDocument = require('./../swagger')
 
 const router = app => {
   // Checks that the API works
   app.get('/test', async (request, response) => {
     response.send({ success: true })
   })
+
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+
   // Deploys an Optical topology in an emulated environment with ONOS as the SDN controller
   app.get('/deploy/:topologyType/:topologyName', async (request, response) => {
     const reply = {}
