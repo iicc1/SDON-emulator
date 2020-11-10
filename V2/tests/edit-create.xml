@@ -1,0 +1,12 @@
+<config>
+  <openconfig-platform>
+    <components xmlns="http://openconfig.net/yang/platform">
+        <component>
+            <name>compnewmant</name>
+            <config>
+                <name>compnewmant</name>
+            </config>
+        </component>
+    </components>
+    </openconfig-platform>
+</config>

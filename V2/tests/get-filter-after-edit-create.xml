@@ -1,0 +1,10 @@
+<config>
+    <components xmlns:a="http://openconfig.net/yang/platform">
+        <component>
+            <name>compnewmant</name>
+            <config>
+                <name>compnewmant</name>
+            </config>
+        </component>
+    </components>
+</config>

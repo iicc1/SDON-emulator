@@ -1,0 +1,7 @@
+<rpc xmlns:m="urn:ietf:params:xml:ns:netconf:base:1.0">"
+  <get>
+    <filter type='subtree'>
+      <terminal-device xmlns:m='http://openconfig.net/yang/terminal-device'/>
+    </filter>
+  </get>
+</rpc>

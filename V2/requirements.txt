@@ -1,0 +1,3 @@
+pyang
+netconf
+git+https://github.com/robshakir/pyangbind.git
