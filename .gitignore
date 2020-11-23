@@ -1,6 +1,9 @@
 # Generated temp files
 topologies/ONOS/networkConfiguration.json
 
+# Folder to test new features
+test/
+
 # Logs
 logs
 *.log
