@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Remove the dummy Python file
+rm yang/__init__.py
+
 # Gets the pyangbind plugin path
 export PYBINDPLUGIN=$(python -c 'import pyangbind; import os; print ("{}/plugin".format(os.path.dirname(pyangbind.__file__)))')
 
