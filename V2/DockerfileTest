@@ -21,5 +21,5 @@ RUN bash load-yangs.sh
 # Generate bindings for these yang files
 RUN bash generate-bindings.sh
 
-# Run netconf server
-CMD python server.py
+# Allows to have the container running without any main process
+CMD tail -f /dev/null
