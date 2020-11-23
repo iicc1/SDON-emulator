@@ -11,10 +11,11 @@ import re
 from netconf import error, server, util
 from netconf import nsmap_add, NSMAP
 from lxml import etree
+import xml.etree.ElementTree as ET
 
 nsmap_add("sys", "urn:ietf:params:xml:ns:yang:ietf-system")
 
-# Credits to https://github.com/CFSNM/NetconfEmulator
+
 def process_changes(data_to_insert_xml, current_config_xml):
 
     config_tree = etree.ElementTree(current_config_xml)
@@ -139,9 +140,21 @@ class SystemServer(object):
         current_config = util.elm("data")
         # Read running configuration from the config file
         current_config = get_config_by_datastore(current_config, 'running')
-        current_config_internal = current_config[0]
+        current_config_internal = current_config[0] ## Realmente estamos cogiendo la config primera, que es la de platform
+        # Para hacer esto habria que iterar las configus y hacer el process changes. y un trycatch aqui en el processchanges
+        # ademas habria que construir el fichero de config final.
+        # Nota: el edit se hace referente al contenido interno. Es decir:
+        # config: <openconfigplatform><components></components></openconfigplatform>  edit: <components></components> 
+        # si guardamos sin lo de openconfig, seria:
+        # config: <components><component></component></components>  edit: <component></component>
+        # Entonces hay dos opciones para la config, guardarla con <openconfig o no. vamos a hacerlo con para no editar el editconfig.
+        # para los demas rpc quizas hay que coger lo de dentro
+
         # Edit the current config and build the new config
+        print('a')
+        logging.info("Received edit-config rpc:\n" + etree.tostring(current_config_internal, pretty_print = True).decode("utf-8"))
         new_config_internal = process_changes(data_to_insert_xml, current_config_internal)
+        print('b')
         new_config = util.elm('data')
         new_config.append(new_config_internal)
         # Save the new config
@@ -154,6 +167,29 @@ class SystemServer(object):
         logging.info("Received get rpc:\n" + etree.tostring(rpc, pretty_print = True).decode("utf-8"))
         # Add Netconf header to all responses
         response = util.elm("nc:data")
+        # ONOS TEST
+        # Checks if has the tag and no childs, then send special reply # TODO funcion de nesting maximo o usar las busquedas
+        #if len(rpc[0]) and len(rpc[0][0]) and len(rpc[0][0][0]) and len(rpc[0][0][0][0]) and len(rpc[0][0][0][0][0]) and len(rpc[0][0][0][0][0][0]) and rpc[0][0][0][0][0][0].tag == "terminal-device" and not len(rpc[0][0][0][0][0][0]):
+        # las rpc de onos son mas cortas, creo que va a ser mejor usar otro netconf client
+        if len(rpc[0]) and len(rpc[0][0]):
+          print('asdadas')
+          
+          logging.info('DENTRO') # SOLO SALE EN ONOS ESTO, NO LOS PRINT
+          response = get_config_by_datastore(response, 'running')
+          print(response)
+          print(etree.tostring(response[1][0], pretty_print = True).decode("utf-8"))
+          response2 = util.elm("nc:data")
+          response2.append(response[1][0])
+          # LIMPIAR DE NS0
+          response_str =  etree.tostring(response2).decode("utf-8")
+          response_str = response_str.replace("ns0:", "")
+          response2 = etree.fromstring(response_str)
+          return response2
+          #return util.filter_results(rpc, response[0], filter_or_none)  quiere solo Passed in key must select exactly one node: data/terminal-device/logical-channel
+        print('+++++++++')
+        logging.info('FUERA')
+
+
         # Read running configuration from the config file
         response = get_config_by_datastore(response, 'running')
         return util.filter_results(rpc, response, filter_or_none)
@@ -197,7 +233,7 @@ if __name__ == "__main__":
     main()
 
 __author__ = 'Ignacio Iglesias Castreño'
-__date__ = 'November 2020'
+__date__ = 'October 2020'
 __version__ = '1.0'
 __docformat__ = "restructuredtext en"
 

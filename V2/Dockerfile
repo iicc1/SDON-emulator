@@ -7,15 +7,12 @@ ENV YANG_URLS ${YANG_URLS}
 
 COPY . /root
 
-# deberia ser startup la inicial
-RUN mkdir yang datastore/candidate datastore/startup
-
 RUN apt-get update -y && apt-get install -y xsltproc libxml2-utils
 
 RUN pip install --no-cache-dir -r requirements.txt
 
 RUN bash load-yangs.sh
-RUN bash generate-bindings.sh
+#RUN bash generate-bindings.sh
 
 CMD python server.py
 # CMD tail -f /dev/null
