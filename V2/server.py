@@ -112,6 +112,12 @@ def save_config_by_datastore(data, datastore):
   config_file = open('datastore/' + datastore + '/config1.xml', 'w+')
   config_file.write(etree.tostring(data, pretty_print = True).decode("utf-8"))
 
+# Ignacio
+def clean_xml_ns(data):
+  data_str =  etree.tostring(data).decode("utf-8")
+  data_str_clean = data_str.replace("ns0:", "")
+  return etree.fromstring(data_str_clean)
+
 class SystemServer(object):
     def __init__(self, port, host_key, auth, debug):
         self.server = server.NetconfSSHServer(auth, self, port, host_key, debug)
@@ -168,27 +174,13 @@ class SystemServer(object):
         # Add Netconf header to all responses
         response = util.elm("nc:data")
         # ONOS TEST
-        # Checks if has the tag and no childs, then send special reply # TODO funcion de nesting maximo o usar las busquedas
-        #if len(rpc[0]) and len(rpc[0][0]) and len(rpc[0][0][0]) and len(rpc[0][0][0][0]) and len(rpc[0][0][0][0][0]) and len(rpc[0][0][0][0][0][0]) and rpc[0][0][0][0][0][0].tag == "terminal-device" and not len(rpc[0][0][0][0][0][0]):
-        # las rpc de onos son mas cortas, creo que va a ser mejor usar otro netconf client
-        if len(rpc[0]) and len(rpc[0][0]):
-          print('asdadas')
-          
-          logging.info('DENTRO') # SOLO SALE EN ONOS ESTO, NO LOS PRINT
+        # Checks if has the tag and no childs, then send special reply
+        if len(rpc[0]) and len(rpc[0][0]) and "terminal-device" in rpc[0][0][0].tag: # TODO hacerlo con el search de etree
           response = get_config_by_datastore(response, 'running')
-          print(response)
-          print(etree.tostring(response[1][0], pretty_print = True).decode("utf-8"))
-          response2 = util.elm("nc:data")
-          response2.append(response[1][0])
-          # LIMPIAR DE NS0
-          response_str =  etree.tostring(response2).decode("utf-8")
-          response_str = response_str.replace("ns0:", "")
-          response2 = etree.fromstring(response_str)
-          return response2
-          #return util.filter_results(rpc, response[0], filter_or_none)  quiere solo Passed in key must select exactly one node: data/terminal-device/logical-channel
-        print('+++++++++')
-        logging.info('FUERA')
-
+          response = util.elm("nc:data")
+          response.append(get_config_by_datastore(response, 'running')[1][0])
+          response = clean_xml_ns(response)
+          return response
 
         # Read running configuration from the config file
         response = get_config_by_datastore(response, 'running')
